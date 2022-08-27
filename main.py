@@ -25,6 +25,12 @@ def update_last_scorer(scorer_path):
 
     shutil.copyfile(original, target)
 
+def write_scorer_GUI(scorer):
+    scorer = "".join(scorer)
+    scorer = scorer.strip("[']")
+    with open("./data/score/scorer.txt", 'w', encoding="utf-8") as f:
+        f.write(str(scorer))
+
 
 def create_player_list(offset):
     players: List = []
@@ -34,6 +40,8 @@ def create_player_list(offset):
     return players
 
 player_list = create_player_list(0)
+player_list_osp = create_player_list(14)
+
 
 
 def check_status():
@@ -48,7 +56,7 @@ def check_status():
     with open("./data/score/ospiti.txt", 'r', encoding="utf-8") as f:
         ospiti = f.read()
 
-    output = "                       " + home + " - " + out + "\nRisultato attuale:       " + scq + " - " + ospiti + "\nTempo: " + period
+    output = "Squadre:\t\t\t" + home + "\t  -\t" + out + "\nRisultato attuale:\t\t" + scq + "\t  -\t" + ospiti + "\nTempo:\t\t\t\t  " + period + "\n\n"
 
     return output
 
@@ -61,10 +69,22 @@ def change_period(period):
 def do_operation(file_path, op):
     with open("./data/score/" + file_path, 'r', encoding="utf-8") as f:
         value = f.read()
-        num = int(value) + (op)
+
+        if ((int(value) + (op)) >= 0):
+            num = int(value) + (op)
+        else:
+            num = int(value)
+
         with open("./data/score/" + file_path, 'w', encoding="utf-8") as fx:
             fx.write(str(num))
 
+
+def writenumber(file_path, op):
+    with open("./data/score/" + file_path, 'r', encoding="utf-8") as f:
+        value = f.read()
+        num = (op)
+        with open("./data/score/" + file_path, 'w', encoding="utf-8") as fx:
+            fx.write(str(num))
 
 def write_to_file(word):
     with open("/Dictionaries/eng.txt", "a+") as f:
@@ -185,26 +205,41 @@ def serve_menu():
         sg.theme('DarkRed1')
 
        
-        layout = [[sg.Text('List of InBuilt Themes')],
+        layout = [[sg.Text('La nuova Scoreboard per le dirette del Quinto by Marco')],
                 [sg.Text(check_status(), key ='-RES-')],
-                [sg.Button('Quinto'), sg.Button('Ospiti'))    # set options for item in listbox
-],
+                [sg.Button('Quinto'), sg.Button('Ospiti'), sg.Button('!Quinto'), sg.Button('!Ospiti'), sg.Button('Reset')],  # set options for item in listbox
                 [sg.Listbox(values = player_list,
-                            size =(20, 12),
-                            key ='-LIST-',
+                            size =(24, 16),
+                            key ='-LISTscq-',
                             enable_events = True),
-                sg.Listbox(values = player_list,
-                            size =(20, 12),
-                            key ='-LIST-',
+                sg.Listbox(values = player_list_osp,
+                            size =(24, 16),
+                            key ='-LISTosp-',
                             enable_events = True)],
+                [sg.Slider(orientation ='horizontal', key='timesSlider', enable_events = True, size = (42,20), range=(1,4))],
                 [sg.Button('Exit')]]
         
-        window = sg.Window('SCQuinto Scoreboard Manager', layout)
+        window = sg.Window('SCQuinto Scoreboard Manager', layout, element_justification='c')
 
         # This is an Event Loop
         while True:  
             event, values = window.read()
-            
+
+            if event in (None,'timesSlider'):
+                k = int(values['timesSlider'])
+                change_period(k)
+                window['-RES-'].Update(check_status())
+
+            if event in (None,'-LISTscq-'):
+                k = (values['-LISTscq-'])
+                write_scorer_GUI(k)
+                window['-RES-'].Update(check_status())
+
+            if event in (None,'-LISTosp-'):
+                k = (values['-LISTosp-'])
+                write_scorer_GUI(k)
+                window['-RES-'].Update(check_status())
+
             if event in (None, 'Exit'):
                 break
 
@@ -216,6 +251,22 @@ def serve_menu():
             if event in (None, 'Ospiti'):
                 do_operation("ospiti.txt", 1)
                 window['-RES-'].Update(check_status())
+
+            if event in (None, '!Quinto'):
+                do_operation("scq.txt", -1)
+                window['-RES-'].Update(check_status())
+
+
+            if event in (None, '!Ospiti'):
+                do_operation("ospiti.txt", -1)
+                window['-RES-'].Update(check_status())
+
+            
+            if event in (None, 'Reset'):
+                writenumber("ospiti.txt", 0)
+                writenumber("scq.txt", 0)
+                window['-RES-'].Update(check_status())
+                                
                             
         # Close
         window.close()
