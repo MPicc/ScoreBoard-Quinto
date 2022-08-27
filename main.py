@@ -199,6 +199,7 @@ def serve_menu():
         return serve_menu(),
 
     elif choice == 'g':
+        read_teams()
         print("GUI avviata! \n\n")
         
         # Choose a Theme for the Layout
