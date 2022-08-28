@@ -1,0 +1,16 @@
+
+1. Primo Primi
+2. Secondo Secondi
+3. Terzo Terzi
+4. Quarto Quarti
+5. Quinto Quinti
+6. Sesto Sesti
+7. Settimo Settimi
+8. Ottavo Ottavi
+9. Nono Noni
+10. Decimo Decimi
+11. Undicesimo Undicesimi
+12. Dodicesimo Dodicesimi
+13. Tredicesimo Tredicesimi
+
+All. Ciao\

@@ -39,9 +39,20 @@ def create_player_list(offset):
             players.append(str(i) + ". " + f.read())
     return players
 
-player_list = create_player_list(0)
-player_list_osp = create_player_list(14)
+def create_teams_textfile():
 
+    player_list = create_player_list(0)
+    player_list_osp = create_player_list(14)
+
+    with open("./data/score/" + "PlayerListSCQ" + ".txt", 'w', encoding="utf-8") as f:
+        for i in range(1, 14):
+            f.write("\n" + "".join(player_list[i]))
+        f.write("\n")
+
+    with open("./data/score/" + "PlayerListOSP" + ".txt", 'w', encoding="utf-8") as f:
+        for i in range(1, 14):
+            f.write("\n" + "".join(player_list_osp[i]))
+        f.write("\n")
 
 
 def check_status():
@@ -56,7 +67,7 @@ def check_status():
     with open("./data/score/ospiti.txt", 'r', encoding="utf-8") as f:
         ospiti = f.read()
 
-    output = "Squadre:\t\t\t" + home + "\t  -\t" + out + "\nRisultato attuale:\t\t" + scq + "\t  -\t" + ospiti + "\nTempo:\t\t\t\t  " + period + "\n\n"
+    output = "\n" + home + " - " + out + "\n" + scq + " - " + ospiti + "\n" + period + "\n\n"
 
     return output
 
@@ -199,16 +210,18 @@ def serve_menu():
         return serve_menu(),
 
     elif choice == 'g':
-        read_teams()
+
+        player_list = create_player_list(0)
+        player_list_osp = create_player_list(14)
+
         print("GUI avviata! \n\n")
         
         # Choose a Theme for the Layout
         sg.theme('DarkRed1')
-
        
         layout = [[sg.Text('La nuova Scoreboard per le dirette del Quinto by Marco')],
-                [sg.Text(check_status(), key ='-RES-')],
-                [sg.Button('Quinto'), sg.Button('Ospiti'), sg.Button('!Quinto'), sg.Button('!Ospiti'), sg.Button('Reset')],  # set options for item in listbox
+                [sg.Text(check_status(), key ='-RES-', justification='c')],
+                [sg.Button('Quinto'), sg.Button('Ospiti'), sg.Button('!Quinto'), sg.Button('!Ospiti'), sg.Button('Reset'), sg.Button('Load Data')],  # set options for item in listbox
                 [sg.Listbox(values = player_list,
                             size =(24, 16),
                             key ='-LISTscq-',
@@ -217,8 +230,11 @@ def serve_menu():
                             size =(24, 16),
                             key ='-LISTosp-',
                             enable_events = True)],
+                [sg.Text ('Allenatori: ')],
+                [sg.InputText(key ='allSCQ', size = (21,20)),sg.InputText(key ='allOSP', size = (21,20))],
+                [sg.Text ('Tempo: ')],
                 [sg.Slider(orientation ='horizontal', key='timesSlider', enable_events = True, size = (42,20), range=(1,4))],
-                [sg.Button('Exit')]]
+                [sg.Button('Exit'), sg.Button('Crea File Formazioni')]]
         
         window = sg.Window('SCQuinto Scoreboard Manager', layout, element_justification='c')
 
@@ -244,10 +260,16 @@ def serve_menu():
             if event in (None, 'Exit'):
                 break
 
+            if event in (None, 'Crea File Formazioni'):
+                create_teams_textfile()
+                with open("./data/score/" + "PlayerListSCQ" + ".txt", 'a', encoding="utf-8") as f:
+                    f.write("\nAll. " + values['allSCQ'])
+                with open("./data/score/" + "PlayerListOSP" + ".txt", 'a', encoding="utf-8") as f:
+                    f.write("\nAll. " + values['allOSP'])
+
             if event in (None, 'Quinto'):
                 do_operation("scq.txt", 1)
                 window['-RES-'].Update(check_status())
-
 
             if event in (None, 'Ospiti'):
                 do_operation("ospiti.txt", 1)
@@ -257,17 +279,22 @@ def serve_menu():
                 do_operation("scq.txt", -1)
                 window['-RES-'].Update(check_status())
 
-
             if event in (None, '!Ospiti'):
                 do_operation("ospiti.txt", -1)
                 window['-RES-'].Update(check_status())
-
             
             if event in (None, 'Reset'):
                 writenumber("ospiti.txt", 0)
                 writenumber("scq.txt", 0)
                 window['-RES-'].Update(check_status())
-                                
+
+            if event in (None, 'Load Data'):
+                read_teams()
+                player_list = create_player_list(0)
+                player_list_osp = create_player_list(14)
+                window['-LISTscq-'].Update(player_list)
+                window['-LISTosp-'].Update(player_list_osp)
+                window['-RES-'].Update(check_status())                                
                             
         # Close
         window.close()
