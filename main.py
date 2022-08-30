@@ -11,7 +11,25 @@ from typing import List, Any
 from pip._vendor.distlib.compat import raw_input
 import PySimpleGUI as sg
 
-
+if not os.path.exists("./data"):
+    os.makedirs("./data")
+if not os.path.exists("./data/score"):
+    os.makedirs("./data/score")
+if not os.path.exists("./data/out"):
+    os.makedirs("./data/out")
+for i in range (0,34):
+    with open("./data/out/" + str(i) + ".txt", 'a+', encoding="utf-8") as f:
+        f.close()
+with open("./data/score/period.txt", 'a+', encoding="utf-8") as f:
+    f.close()
+with open("./data/score/scq.txt", 'a+', encoding="utf-8") as f:
+    if (os.path.getsize("./data/score/scq.txt") == 0):
+        f.write(str(0))
+    f.close()
+with open("./data/score/ospiti.txt", 'a+', encoding="utf-8") as f:
+    if (os.path.getsize("./data/score/ospiti.txt") == 0):
+        f.write(str(0))
+    f.close()
 
 def this():
     '''do stuff and return next menu'''
@@ -28,7 +46,7 @@ def update_last_scorer(scorer_path):
 def write_scorer_GUI(scorer):
     scorer = "".join(scorer)
     scorer = scorer.strip("[']")
-    with open("./data/score/scorer.txt", 'w', encoding="utf-8") as f:
+    with open("./data/score/scorer.txt", 'w+', encoding="utf-8") as f:
         f.write(str(scorer))
 
 
@@ -53,12 +71,12 @@ def create_teams_textfile15():
     with open("./data/out/33.txt", 'r', encoding="utf-8") as f:
         allOSP = f.read()
 
-    with open("./data/score/" + "PlayerListSCQ" + ".txt", 'w', encoding="utf-8") as f:
+    with open("./data/score/" + "PlayerListSCQ" + ".txt", 'w+', encoding="utf-8") as f:
         for i in range(1, 16):
             f.write("\n" + "".join(player_list[i]))
         f.write("\n\nAll. "+ allSCQ)
 
-    with open("./data/score/" + "PlayerListOSP" + ".txt", 'w', encoding="utf-8") as f:
+    with open("./data/score/" + "PlayerListOSP" + ".txt", 'w+', encoding="utf-8") as f:
         for i in range(1, 16):
             f.write("\n" + "".join(player_list_osp[i]))
         f.write("\n\nAll. "+ allOSP)
@@ -73,12 +91,12 @@ def create_teams_textfile13():
     with open("./data/out/33.txt", 'r', encoding="utf-8") as f:
         allOSP = f.read()
 
-    with open("./data/score/" + "PlayerListSCQ" + ".txt", 'w', encoding="utf-8") as f:
+    with open("./data/score/" + "PlayerListSCQ" + ".txt", 'w+', encoding="utf-8") as f:
         for i in range(1, 14):
             f.write("\n" + "".join(player_list[i]))
         f.write("\n\nAll. "+ allSCQ)
 
-    with open("./data/score/" + "PlayerListOSP" + ".txt", 'w', encoding="utf-8") as f:
+    with open("./data/score/" + "PlayerListOSP" + ".txt", 'w+', encoding="utf-8") as f:
         for i in range(1, 14):
             f.write("\n" + "".join(player_list_osp[i]))
         f.write("\n\nAll. "+ allOSP)
@@ -102,7 +120,7 @@ def check_status():
 
 
 def change_period(period):
-    with open("./data/score/period.txt", 'w', encoding="utf-8") as f:
+    with open("./data/score/period.txt", 'w+', encoding="utf-8") as f:
         f.write(str(period))
 
 
@@ -115,7 +133,7 @@ def do_operation(file_path, op):
         else:
             num = int(value)
 
-        with open("./data/score/" + file_path, 'w', encoding="utf-8") as fx:
+        with open("./data/score/" + file_path, 'w+', encoding="utf-8") as fx:
             fx.write(str(num))
 
 
@@ -123,7 +141,7 @@ def writenumber(file_path, op):
     with open("./data/score/" + file_path, 'r', encoding="utf-8") as f:
         value = f.read()
         num = (op)
-        with open("./data/score/" + file_path, 'w', encoding="utf-8") as fx:
+        with open("./data/score/" + file_path, 'w+', encoding="utf-8") as fx:
             fx.write(str(num))
 
 def write_to_file(word):
@@ -309,21 +327,21 @@ def inserisci_giocatori():
 
         if (event in (None, 'Carica e Crea Lista')):
 
-            with open("./data/out/" + "0.txt", 'w', encoding="utf-8") as f:
+            with open("./data/out/" + "0.txt", 'w+', encoding="utf-8") as f:
                         f.write(values['HomeTeam'])
-            with open("./data/out/" + "16.txt", 'w', encoding="utf-8") as f:
+            with open("./data/out/" + "16.txt", 'w+', encoding="utf-8") as f:
                         f.write(values['OSPTeam'])
 
             for i in range(1, 16):
-                    with open("./data/out/" + str(i) + ".txt", 'w', encoding="utf-8") as f:
+                    with open("./data/out/" + str(i) + ".txt", 'w+', encoding="utf-8") as f:
                         f.write(values['SCQPlayer' + str(i)])
             for i in range(1, 16):
-                    with open("./data/out/" + str(i+16) + ".txt", 'w', encoding="utf-8") as f:
+                    with open("./data/out/" + str(i+16) + ".txt", 'w+', encoding="utf-8") as f:
                         f.write(values['OSPPlayer' + str(i)])
                 
-            with open("./data/out/" + "32.txt", 'w', encoding="utf-8") as f:
+            with open("./data/out/" + "32.txt", 'w+', encoding="utf-8") as f:
                         f.write(values['SCQ Allenatore'])
-            with open("./data/out/" + "33.txt", 'w', encoding="utf-8") as f:
+            with open("./data/out/" + "33.txt", 'w+', encoding="utf-8") as f:
                         f.write(values['OSP Allenatore'])
 
             create_teams_textfile13()
