@@ -1,3 +1,3 @@
 @echo OFF
 
-python ./main.py
+start pythonw ./main.pyw
